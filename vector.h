@@ -19,7 +19,7 @@ namespace vec
 		{
 			v_size = new_size;
 			while (v_size > v_cap)
-				v_cap *= 1.5f;
+				v_cap = static_cast<int>(v_cap * 1.5);
 
 			vec_t* tmp = new vec_t[v_cap];
 
@@ -36,7 +36,7 @@ namespace vec
 
 		void vec_resize_to_push_back()
 		{
-			v_cap *= 1.5f;
+			v_cap = static_cast<int>(v_cap * 1.5);
 			vec_t* tmp = new vec_t[v_cap];
 
 			for (int i = 0; i < v_size; i++)
@@ -94,7 +94,7 @@ namespace vec
 		}
 
 		//Access to elements
-		vec_t& operator[](const int index)
+		vec_t& operator[](const int index) 
 		{
 			check_in_range(index);
 			return vec[index];
@@ -106,23 +106,23 @@ namespace vec
 			return vec[index];
 		}
 
-		inline vec_t front()
+		vec_t front()
 		{
 			return vec[0];
 		}
 
-		inline vec_t back()
+		vec_t back()
 		{
 			return vec[v_size - 1];
 		}
 
 		//Work with vector size
-		inline int size()
+		int size()
 		{
 			return v_size;
 		}
 
-		inline int capacity()
+		int capacity()
 		{
 			return v_cap;
 		}
@@ -137,12 +137,12 @@ namespace vec
 			vec_resize_with_fill_val(size, data);
 		}
 
-		inline bool empty()
+		bool empty()
 		{
 			return v_size == 0 ? true : false;
 		}
 
-		inline void shrink_to_fit()
+		void shrink_to_fit()
 		{
 			v_cap = v_size;
 		}
@@ -161,6 +161,103 @@ namespace vec
 			vec[v_size] = NULL;
 			v_size--;
 		}
-	};
 
+		class iterator
+		{
+		private:
+			vec_t it;
+
+		public:
+
+			iterator(vec_t v) : it(v)
+			{ }
+
+			iterator& operator=(const vec_t v)
+			{
+				it = v;
+				return *this;
+			}
+
+			iterator operator+(const vec_t val)
+			{
+				return it + val;
+			}
+
+
+			iterator operator-(const vec_t val)
+			{
+				return it - val;
+			}
+
+			iterator& operator+=(const vec_t val)
+			{
+				it = it + val;
+				return *this;
+			}
+
+			iterator& operator-=(const vec_t val)
+			{
+				return *this += -val;
+			}
+
+			//++x
+			iterator& operator++()
+			{	
+				it = it + 1;
+				return *this;
+			}
+			//x++
+			iterator operator++(int)
+			{
+				iterator tmp(*this);
+				it = it + 1;
+				return tmp;
+			}
+
+			//--x
+			iterator& operator--()
+			{
+				it = it - 1;
+				return *this;
+			}
+			//x--
+			iterator operator--(int)
+			{
+				iterator tmp(*this);
+				it = it - 1;
+				return tmp;
+			}
+
+			bool operator<(const vec_t right)
+			{
+				return it < right;
+			}
+
+			bool operator>(const vec_t right)
+			{
+				return it > right;
+			}
+
+			bool operator<=(const vec_t right)
+			{
+				return it <= right;
+			}
+
+			bool operator>=(const vec_t right)
+			{
+				return it >= right;
+			}
+
+			bool operator==(const iterator iter)
+			{
+				return it == iter.it;
+			}
+
+			friend std::ostream& operator<<(std::ostream& os, const iterator& iter)
+			{
+				os << iter.it;
+				return os;
+			}
+		};
+	};
 }
